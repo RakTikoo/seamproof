@@ -1,7 +1,9 @@
 """Tests for seamproof.  All fixtures are synthetic and generated here."""
 import io
+import struct
 import tempfile
 import unittest
+import zlib
 from contextlib import redirect_stderr
 from pathlib import Path
 
@@ -201,6 +203,35 @@ class TestCli(unittest.TestCase):
         self.assertEqual(rc, 0)
         self.assertTrue(any("too small" in line for line in logs))
         self.assertTrue((out / "tiny.png").exists())
+
+    def test_16_bit_grayscale_png_keeps_interior_precision(self):
+        src = self.root / "height16.png"
+        out = self.root / "out"
+        values = np.linspace(0x1234, 0xFF00, 64 * 64, dtype=np.uint16).reshape(64, 64)
+        Image.fromarray(values).save(src)
+
+        self.assertEqual(cli.main(["fix", str(src), "--out", str(out), "--band", "4"]), 0)
+        with Image.open(out / src.name) as image:
+            self.assertGreaterEqual(np.asarray(image).dtype.itemsize, 2)
+            np.testing.assert_array_equal(np.asarray(image)[8:-8, 8:-8], values[8:-8, 8:-8])
+
+    def test_16_bit_rgb_png_is_rejected_without_output(self):
+        src = self.root / "rgb16.png"
+        out = self.root / "out"
+
+        def chunk(kind, data):
+            return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
+
+        header = struct.pack(">IIBBBBB", 1, 1, 16, 2, 0, 0, 0)
+        pixels = zlib.compress(struct.pack(">BHHH", 0, 0x1234, 0x4001, 0xFF00))
+        src.write_bytes(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", header) + chunk(b"IDAT", pixels) + chunk(b"IEND", b""))
+
+        err = io.StringIO()
+        with redirect_stderr(err):
+            rc = cli.main(["fix", str(src), "--out", str(out)])
+        self.assertEqual(rc, 2)
+        self.assertIn("unsupported 16-bit PNG", err.getvalue())
+        self.assertFalse((out / src.name).exists())
 
     def test_non_image_file_clean_error(self):
         src = self.root / "notes.txt"

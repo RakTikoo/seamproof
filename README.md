@@ -90,13 +90,13 @@ Reading the score: ≤ 2 *good* (not visible in practice), ≤ 8 *fair* (faint o
 * Strong, unique content crossing an edge (a face, a trunk, a logo) cannot be hidden by any local blend. seamproof will soften it and report a mediocre score plus a high band repaint instead of pretending otherwise.
 * The mirror cross-fade can produce faint symmetric "ghost" shapes inside the blend band on busy textures. The band repaint number is your warning light.
 * Detrend flattens *all* low frequency in a colour map, including deliberate broad shading. Use `--no-detrend` if your albedo's gradient is intentional (you will keep more of the seam, and the score will show it).
-* One size per set, 8-bit images, PNG/JPEG/TGA/BMP/WebP/TIFF. Alpha channels are passed through unchanged (alpha seams are not fixed). Normal maps are assumed tangent-space OpenGL (Y+); a DirectX (Y−) map is blended the same way but its green channel is not flipped for you.
+* One size per set. Supports 8-bit PNG/JPEG/TGA/BMP/WebP/TIFF and 16-bit grayscale PNG without transparency. An unlabelled 16-bit grayscale PNG is treated as data and skips detrending. Unsupported high-bit-depth images produce an error. Supported alpha channels are passed through unchanged (alpha seams are not fixed). Normal maps are assumed tangent-space OpenGL (Y+); a DirectX (Y−) map is blended the same way but its green channel is not flipped for you.
 * Images smaller than 8×8 are reported and copied unchanged — there is no room to blend.
 
 ## Development
 
 ```console
-python3 run_tests.py                  # 15 tests, stdlib unittest
+python3 run_tests.py                  # stdlib unittest
 python3 examples/generate_examples.py # regenerate the sample textures + demo image
 ```
 

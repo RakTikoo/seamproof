@@ -67,26 +67,46 @@ def parse_map_name(filename: str) -> tuple[str, str]:
 
 
 def load_image(path: Path):
-    """Load an image as (float array HxWxC, alpha or None, PIL mode)."""
+    """Load HxWxC floats in 0–255, optional alpha, and the output mode.
+
+    The I;16 output mode preserves the depth of a 16-bit grayscale PNG.
+    """
     try:
-        img = Image.open(path)
-        img.load()
+        with path.open("rb") as stream:
+            header = stream.read(26)
+            stream.seek(0)
+            img = Image.open(stream)
+            img.load()
     except Exception:
         raise UserError(f"not a readable image: {path.name}")
+    # Pillow exposes 16-bit PNG color as RGB/RGBA after reducing it to 8 bits.
+    # The IHDR bit-depth and color-type bytes still identify the original data.
+    if img.format == "PNG" and len(header) >= 26 and header[24] == 16:
+        if header[25] != 0 or "transparency" in img.info or path.suffix.lower() != ".png":
+            raise UserError(f"unsupported 16-bit PNG: {path.name} (expected grayscale PNG without transparency)")
+        return np.asarray(img, dtype=np.float64)[:, :, None] / 257, None, "I;16"
+    if img.mode in ("I", "F") or img.mode.startswith("I;16") or (
+        img.format == "TIFF" and any(depth > 8 for depth in img.tag_v2.get(258, ()))
+    ):
+        raise UserError(f"unsupported high-bit-depth image: {path.name} (use a grayscale 16-bit PNG)")
     if img.mode == "RGBA":
         arr = np.asarray(img).astype(np.float64)
         return arr[:, :, :3].copy(), arr[:, :, 3].copy(), "RGBA"
     if img.mode == "LA":
         arr = np.asarray(img).astype(np.float64)
         return arr[:, :, 0:1].copy(), arr[:, :, 1].copy(), "LA"
-    if img.mode in ("L", "I;16", "I"):
-        arr = np.asarray(img.convert("L")).astype(np.float64)
+    if img.mode == "L":
+        arr = np.asarray(img, dtype=np.float64)
         return arr[:, :, None].copy(), None, "L"
     arr = np.asarray(img.convert("RGB")).astype(np.float64)
     return arr.copy(), None, "RGB"
 
 
 def save_image(path: Path, arr: np.ndarray, alpha, mode: str) -> None:
+    if mode == "I;16":
+        values = np.clip(np.rint(arr[:, :, 0] * 257), 0, 65535).astype("<u2")
+        Image.fromarray(values).save(path, format="PNG")
+        return
     a = np.clip(np.rint(arr), 0, 255).astype(np.uint8)
     if mode == "L":
         img = Image.fromarray(a[:, :, 0], mode="L")
@@ -186,7 +206,9 @@ def process(
                 repaint = None
             else:
                 repaint = core.band_delta(arr, geom)
-                fixed = core.fix_array(arr, mtype, geom, use_detrend=use_detrend)
+                # An unlabelled 16-bit grayscale image is a data map by default.
+                detrend = use_detrend and not (mode == "I;16" and mtype == "single")
+                fixed = core.fix_array(arr, mtype, geom, use_detrend=detrend)
             after = core.seam_score(fixed)
             tiled = core.tiled_score(fixed)
             extra = f", band repaint {repaint:.1f}" if repaint is not None and repaint > 25.0 else ""
