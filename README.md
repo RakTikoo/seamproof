@@ -1,7 +1,7 @@
 ![seamproof — make a whole PBR texture set tile seamlessly, with a measured seam score](docs/banner.png)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-15%20passing-brightgreen.svg)](#development)
+[![Tests](https://img.shields.io/badge/tests-17%20passing-brightgreen.svg)](#development)
 [![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://github.com/RakTikoo/seamproof/releases)
 
 # seamproof
