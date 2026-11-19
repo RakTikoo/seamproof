@@ -20,6 +20,37 @@ pip install git+https://github.com/RakTikoo/seamproof
 
 Requires Python ≥ 3.10, numpy and Pillow. CPU only; no ML, no network.
 
+Or from the release files (no registry involved): download
+`seamproof-0.1.0-py3-none-any.whl` from the
+[v0.1.0 release](https://github.com/RakTikoo/seamproof/releases/tag/v0.1.0)
+(check it against the release's SHA256SUMS if you want) and install it:
+
+```console
+pip install seamproof-0.1.0-py3-none-any.whl
+```
+
+Or install straight from GitHub at the v0.1.0 tag:
+
+```console
+pip install git+https://github.com/RakTikoo/seamproof@v0.1.0
+pipx install git+https://github.com/RakTikoo/seamproof@v0.1.0
+uv tool install git+https://github.com/RakTikoo/seamproof@v0.1.0
+```
+
+With Homebrew (macOS/Linux):
+
+```console
+brew tap RakTikoo/tools
+brew install RakTikoo/tools/seamproof
+```
+
+With Scoop (Windows):
+
+```powershell
+scoop bucket add RakTikoo https://github.com/RakTikoo/scoop-bucket
+scoop install seamproof
+```
+
 ## Demo (real output)
 
 ```console
