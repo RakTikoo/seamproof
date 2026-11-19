@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - name: RakTikoo
+title: "seamproof: make a texture or a whole PBR texture set tile seamlessly"
+version: 0.1.0
+date-released: 2026-11-17
+license: MIT
+url: "https://github.com/RakTikoo/seamproof"
+repository-code: "https://github.com/RakTikoo/seamproof"
+abstract: >-
+  Makes a single texture or a whole PBR texture set tile seamlessly and
+  reports a measured seam score for the result, so the fix is proven rather
+  than eyeballed.
+keywords:
+  - textures
+  - PBR
+  - tiling
+  - game art
+  - image processing

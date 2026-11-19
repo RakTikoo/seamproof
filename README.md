@@ -6,6 +6,8 @@
 
 # seamproof — make a texture or a whole PBR texture set tile seamlessly
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/RakTikoo/seamproof)
+
 Make a texture — or a whole PBR map set — tile seamlessly, with one shared fix across every map and a measured seam score that proves it.
 
 Game engines repeat textures but never repair them. The usual workflow is Photoshop's Offset filter plus hand-healing, or a single-image web fixer that can't handle gradients and vignetting and treats each PBR map separately (so the set drifts out of register). seamproof works on the whole set at once, applies the *same* geometric fix to every map, and certifies the result with a number, not a vibe.
@@ -50,6 +52,8 @@ With Scoop (Windows):
 scoop bucket add RakTikoo https://github.com/RakTikoo/scoop-bucket
 scoop install seamproof
 ```
+
+**For agent users:** this repository ships a `SKILL.md` for AI agents. Install it with `npx skills add RakTikoo/seamproof`.
 
 ## Demo (real output)
 
