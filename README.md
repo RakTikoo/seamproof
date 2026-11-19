@@ -63,7 +63,7 @@ seamproof fix <file-or-folder> --out <dir> [--score-only] [--no-detrend] [--band
 This repo is also a composite GitHub Action: it installs seamproof from this repo at the ref you pin, and runs it on a texture file or a folder of textures.
 
 ```yaml
-- uses: RakTikoo/seamproof@v0.1.0
+- uses: RakTikoo/seamproof@main
   with:
     path: textures/
     out: fixed/
