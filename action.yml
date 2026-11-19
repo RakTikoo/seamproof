@@ -1,0 +1,32 @@
+name: seamproof
+description: Make a texture or a whole PBR texture set tile seamlessly, with a measured seam score
+author: RakTikoo
+inputs:
+  path:
+    description: Texture file or folder of textures to fix
+    required: true
+  out:
+    description: Output folder for the fixed textures (unused when score-only is true)
+    required: false
+    default: seamproof-fixed
+  score-only:
+    description: Measure only and write nothing ("true" or "false")
+    required: false
+    default: "false"
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Install seamproof from this repo
+      shell: bash
+      run: pip install "git+https://github.com/RakTikoo/seamproof@${{ github.action_ref || 'main' }}"
+    - name: Run seamproof
+      shell: bash
+      run: |
+        if [ "${{ inputs.score-only }}" = "true" ]; then
+          seamproof fix "${{ inputs.path }}" --score-only
+        else
+          seamproof fix "${{ inputs.path }}" --out "${{ inputs.out }}"
+        fi

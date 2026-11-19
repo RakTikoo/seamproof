@@ -4,13 +4,21 @@
 [![Tests](https://img.shields.io/badge/tests-17%20passing-brightgreen.svg)](#development)
 [![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://github.com/RakTikoo/seamproof/releases)
 
-# seamproof
+# seamproof — make a texture or a whole PBR texture set tile seamlessly
 
 Make a texture — or a whole PBR map set — tile seamlessly, with one shared fix across every map and a measured seam score that proves it.
 
 Game engines repeat textures but never repair them. The usual workflow is Photoshop's Offset filter plus hand-healing, or a single-image web fixer that can't handle gradients and vignetting and treats each PBR map separately (so the set drifts out of register). seamproof works on the whole set at once, applies the *same* geometric fix to every map, and certifies the result with a number, not a vibe.
 
 ![Ground texture tiled 3x3, before and after](examples/demo_compare.png)
+
+## Install
+
+```console
+pip install git+https://github.com/RakTikoo/seamproof
+```
+
+Requires Python ≥ 3.10, numpy and Pillow. CPU only; no ML, no network.
 
 ## Demo (real output)
 
@@ -31,14 +39,6 @@ Measure without writing anything:
 $ seamproof fix textures/ground_albedo.png --score-only
 ```
 
-## Install
-
-```console
-pip install git+https://github.com/RakTikoo/seamproof
-```
-
-Requires Python ≥ 3.10, numpy and Pillow. CPU only; no ML, no network.
-
 ## Usage
 
 ```console
@@ -57,6 +57,19 @@ seamproof fix <file-or-folder> --out <dir> [--score-only] [--no-detrend] [--band
   | `_metallic`, `_metalness`, `_ao`, `_occlusion` | other data map |
 
   So `rock_albedo.png`, `rock_normal.png`, `rock_roughness.png` and `rock_height.png` are one set named `rock`. A file with no known suffix is treated as a standalone colour image. All maps in a set must be the same size (a mismatch is a clean error, not a silent resize). A set with no albedo gets a warning and its data maps are still fixed.
+
+## Use in GitHub Actions
+
+This repo is also a composite GitHub Action: it installs seamproof from this repo at the ref you pin, and runs it on a texture file or a folder of textures.
+
+```yaml
+- uses: RakTikoo/seamproof@v0.1.0
+  with:
+    path: textures/
+    out: fixed/
+```
+
+Set `score-only: "true"` to measure without writing files. The step fails when seamproof itself errors (exit 2 — for example, maps in one set with different sizes). A completed run exits 0 even when a texture's verdict is *poor*, so read the per-map scores in the step log.
 
 ## How it works
 

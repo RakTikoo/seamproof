@@ -1,6 +1,6 @@
 ---
 name: seamproof
-description: Make a texture or a whole PBR texture set tile seamlessly, with a measured seam score. Use when asked to make a texture seamless or tileable, fix visible seams or a repeating grid on a game texture, or process PBR maps (albedo/basecolor, normal, roughness, height, metallic/AO) so the whole set stays in register — for example "make this texture tile", "fix the seams on these maps", "why does my texture show a grid when tiled", or "score how seamless this texture is".
+description: Make a texture or a whole PBR texture set tile seamlessly, with a measured seam score. Use when asked to make a texture seamless or tileable, fix visible seams or a repeating grid on a game texture, or process PBR maps (albedo/basecolor, normal, roughness, height, metallic/AO) so the whole set stays in register — for example "make this texture tile", "fix the seams on these maps", "why does my texture show a grid when tiled", or "score how seamless this texture is". Not for finding 9-slice borders in UI panels (that is patchproof) or recovering the grid of damaged pixel art (that is snapgrid).
 license: MIT
 compatibility: Requires Python 3.10+; pip installs numpy and Pillow. CPU only, no network or ML at run time; network is needed only to install.
 ---
