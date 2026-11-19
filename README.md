@@ -93,6 +93,10 @@ Reading the score: ≤ 2 *good* (not visible in practice), ≤ 8 *fair* (faint o
 * One size per set. Supports 8-bit PNG/JPEG/TGA/BMP/WebP/TIFF and 16-bit grayscale PNG without transparency. An unlabelled 16-bit grayscale PNG is treated as data and skips detrending. Unsupported high-bit-depth images produce an error. Supported alpha channels are passed through unchanged (alpha seams are not fixed). Normal maps are assumed tangent-space OpenGL (Y+); a DirectX (Y−) map is blended the same way but its green channel is not flipped for you.
 * Images smaller than 8×8 are reported and copied unchanged — there is no room to blend.
 
+## Use with an AI agent
+
+This repo ships a [SKILL.md](SKILL.md) written to the Agent Skills open standard. If your coding agent supports skills, point it at this repo and it can install seamproof, run it on your textures, and read the seam scores and verdicts for you. The skill works when the repo is cloned under its real name (`seamproof`) — a skill's name must match its folder.
+
 ## Development
 
 ```console
